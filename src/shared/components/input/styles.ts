@@ -13,7 +13,12 @@ export const Container = styled.label`
   }
 `
 
-export const Content = styled.div`
+interface ContentProps {
+  isFocused: boolean
+  isFilled: boolean
+}
+
+export const Content = styled.div<ContentProps>`
   display: flex;
   align-items: center;
   width: 100%;
@@ -21,12 +26,18 @@ export const Content = styled.div`
   border-radius: 6px;
   padding: 8px;
 
-  ${({ theme }) => css`
+  ${({ theme, isFocused }) => css`
     background: ${theme.primary_light};
-    border: 1px solid ${theme.primary};
+    border: 2px solid ${isFocused ? theme.primary : theme.primary_light};
     //alterar a cor para a cor do placeholder
-    color: ${theme.light_gray};
+    color: ${isFocused ? theme.primary : theme.light_gray};
   `}
+
+  ${({ theme, isFilled }) =>
+    isFilled &&
+    css`
+      color: ${theme.primary};
+    `}
 
   input {
     flex: 1;
