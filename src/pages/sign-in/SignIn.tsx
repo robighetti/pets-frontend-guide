@@ -51,15 +51,25 @@ export const SignIn: React.FC = () => {
 
   const onSubmit = useCallback(
     async ({ email, password }: SignInForm) => {
-      await signIn({ email, password })
+      try {
+        await signIn({ email, password })
 
-      // console.log(data)
-      // await new Promise((resolve) => setTimeout(resolve, 2000))
-      addToast({
-        type: 'success',
-        title: 'Bem vindo ao Pets',
-        description: 'Aproveite a aplicação !',
-      })
+        // console.log(data)
+        // await new Promise((resolve) => setTimeout(resolve, 2000))
+        addToast({
+          type: 'success',
+          title: 'Bem vindo ao Pets',
+          description: 'Aproveite a aplicação !',
+        })
+      } catch (error: any) {
+        console.error(error.message)
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao logar !',
+          description: 'Verifique suas credenciais !',
+        })
+      }
     },
     [signIn, addToast],
   )

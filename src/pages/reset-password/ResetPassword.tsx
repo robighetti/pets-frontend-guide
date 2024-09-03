@@ -41,7 +41,7 @@ export const ResetPassword: React.FC = () => {
         <img src={logo} alt="Pets" />
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <h1>Recuperar Senha</h1>
+          <h1>Resetar Senha</h1>
 
           <Input
             name="password"

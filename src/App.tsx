@@ -1,13 +1,15 @@
 import { ThemeProvider } from 'styled-components'
+import { BrowserRouter } from 'react-router-dom'
 
 import 'react-toastify/dist/ReactToastify.css'
 
-import { SignIn } from './pages'
 import defaultTheme from './styles/themes/defaultTheme'
 import GlobalStyles from './styles/global'
 
-import { AuthProvider } from './shared/hooks/auth'
-import { ToastProvider } from './shared/hooks/toast/Toast'
+// import { AuthProvider } from './shared/hooks/auth'
+// import { ToastProvider } from './shared/hooks/toast/Toast'
+import { AppProvider } from './shared/hooks'
+import { AppRoutes } from './routes'
 
 /**
  * Fazer a explicação do AuthContext onde o contexto está sendo
@@ -24,15 +26,25 @@ import { ToastProvider } from './shared/hooks/toast/Toast'
 export const App: React.FC = () => {
   return (
     <>
-      <ToastProvider>
+      {/* <ToastProvider>
         <AuthProvider>
           <ThemeProvider theme={defaultTheme}>
             <GlobalStyles />
 
-            <SignIn />
+            <RouterProvider router={router} />
           </ThemeProvider>
         </AuthProvider>
-      </ToastProvider>
+      </ToastProvider> */}
+
+      <AppProvider>
+        <ThemeProvider theme={defaultTheme}>
+          <GlobalStyles />
+
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </ThemeProvider>
+      </AppProvider>
     </>
   )
 }
