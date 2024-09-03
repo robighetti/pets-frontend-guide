@@ -1,7 +1,9 @@
+import { Container } from './styles'
+
 export const Home: React.FC = () => {
   return (
-    <div>
+    <Container>
       <h1>Dashboard</h1>
-    </div>
+    </Container>
   )
 }
