@@ -2,11 +2,11 @@ export default {
   primary: '#ff1e57',
   primary_light: 'rgba(255, 30, 87, 0.1)',
 
-  secondary: '##F205B3',
+  secondary: '#F205B3',
   secondary_light: 'rgba(242, 5, 179, 0.1)',
 
   dark_gray: '#777',
-  light_gray: '#666360',
+  light_gray: '#DCDCDC',
 
   text: '#333',
   white: '#FFF',
