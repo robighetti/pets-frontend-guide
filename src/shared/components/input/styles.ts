@@ -49,7 +49,7 @@ export const Content = styled.div<ContentProps>`
     border: 0;
 
     &::placeholder {
-      color: ${({ theme }) => theme.light_gray};
+      color: ${({ theme }) => theme.dark_gray};
     }
   }
 `
