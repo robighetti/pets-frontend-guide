@@ -1,10 +1,13 @@
-import logo from '../../../../assets/logo.svg'
-import { FaHome } from 'react-icons/fa'
-import { MdPets, MdLogout } from 'react-icons/md'
+import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+// import { FaHome } from 'react-icons/fa'
+import { MdLogout } from 'react-icons/md'
+
+import logo from '../../../../assets/logo.svg'
+
+import { menuOptions, menuOptionsProps } from '../../../utils/menu'
 
 import { Container, Header, Menu, MenuItem, Footer } from './styles'
-import { useCallback } from 'react'
 
 export const Aside: React.FC = () => {
   const navigate = useNavigate()
@@ -22,14 +25,20 @@ export const Aside: React.FC = () => {
         <img src={logo} alt="Pets" />
       </Header>
       <Menu>
-        <MenuItem onClick={() => handleNavigation('/home')}>
+        {menuOptions.map((item: menuOptionsProps) => (
+          <MenuItem key={item.path} onClick={() => handleNavigation(item.path)}>
+            {item.icon}
+            <span>{item.title}</span>
+          </MenuItem>
+        ))}
+        {/* <MenuItem onClick={() => handleNavigation('/home')}>
           <FaHome />
           <span>Home</span>
         </MenuItem>
 
         <MenuItem onClick={() => handleNavigation('/pets')}>
           <MdPets /> <span>Pets</span>
-        </MenuItem>
+        </MenuItem> */}
       </Menu>
 
       <Footer>
