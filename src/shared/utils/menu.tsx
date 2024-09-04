@@ -19,6 +19,6 @@ export const menuOptions = [
     title: 'Pets',
     description: 'Controle dos Pets',
     path: '/pets',
-    icon: <MdIcons.MdLogout />,
+    icon: <MdIcons.MdPets />,
   },
 ] as menuOptionsProps[]
