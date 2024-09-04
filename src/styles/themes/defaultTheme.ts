@@ -11,7 +11,7 @@ export default {
   text: '#333',
   white: '#FFF',
 
-  background: '#F2F2F2',
+  background: 'rgba(255,240,245, 0.2)',
   content: 'rgba(13, 13, 13, 0.1)',
 
   success_title: '#2e656a',

@@ -3,6 +3,8 @@ import styled from 'styled-components'
 export const Container = styled.aside`
   grid-area: AS;
 
+  background: ${({ theme }) => theme.background};
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
