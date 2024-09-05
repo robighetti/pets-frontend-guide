@@ -8,6 +8,8 @@ import {
 // import { FaHome } from 'react-icons/fa'
 import { MdLogout } from 'react-icons/md'
 
+import { useAuth } from '../../../hooks/auth'
+
 import logo from '../../../../assets/logo.svg'
 
 import { menuOptions, menuOptionsProps } from '../../../utils/menu'
@@ -16,6 +18,8 @@ import { Container, Header, Menu, MenuItem, Footer } from './styles'
 
 export const Aside: React.FC = () => {
   const navigate = useNavigate()
+  const { signOut } = useAuth()
+
   const { pathname } = useLocation()
   const resolvedPath = useResolvedPath(pathname)
 
@@ -55,7 +59,7 @@ export const Aside: React.FC = () => {
         </MenuItem> */}
       </Menu>
 
-      <Footer>
+      <Footer onClick={() => signOut()}>
         <MdLogout />
         Sair
       </Footer>
