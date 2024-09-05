@@ -19,6 +19,7 @@ import { Button, Input } from '../../shared/components'
 // import { AuthContext } from '../../shared/hooks/auth'
 import { useAuth } from '../../shared/hooks/auth'
 import { useToast } from '../../shared/hooks/toast/Toast'
+import { useNavigate } from 'react-router-dom'
 
 const signInForm = z.object({
   email: z
@@ -34,6 +35,8 @@ export type SignInForm = z.infer<typeof signInForm>
 export const SignIn: React.FC = () => {
   const { signIn } = useAuth()
   const { addToast } = useToast()
+
+  const navigate = useNavigate()
   // const { signIn } = useContext(AuthContext)
 
   // const auth = useContext(AuthContext)
@@ -110,10 +113,12 @@ export const SignIn: React.FC = () => {
             Entrar
           </Button>
 
-          <a href="#">Esqueci minha senha</a>
+          <a onClick={() => navigate('/forgot-password')}>
+            Esqueci minha senha
+          </a>
         </form>
 
-        <a href="#">
+        <a onClick={() => navigate('/sign-up')}>
           <FiLogIn />
           Cadastre-se
         </a>

@@ -9,6 +9,7 @@ import { Container, Content, Background } from './styles'
 import logo from '../../assets/logo.svg'
 import { Button, Input } from '../../shared/components'
 import { FaArrowLeft } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 
 const forgotPasswordForm = z.object({
   email: z
@@ -19,6 +20,8 @@ const forgotPasswordForm = z.object({
 export type ForgotPasswordForm = z.infer<typeof forgotPasswordForm>
 
 export const ForgotPassword: React.FC = () => {
+  const navigate = useNavigate()
+
   const {
     handleSubmit,
     control,
@@ -54,7 +57,7 @@ export const ForgotPassword: React.FC = () => {
           </Button>
         </form>
 
-        <a href="#">
+        <a onClick={() => navigate('/sign-in')}>
           <FaArrowLeft />
           Retornar para login
         </a>

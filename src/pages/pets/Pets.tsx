@@ -1,13 +1,32 @@
-import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid'
+import { MouseEvent, useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useNavigate } from 'react-router-dom'
 
-import { Container, Header, Content } from './styles'
-import { Button, Input } from '../../shared/components'
-import { useCallback } from 'react'
+import {
+  Box,
+  Icon,
+  IconButton,
+  Menu,
+  MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from '@mui/material'
+
 import { FaSearch } from 'react-icons/fa'
 import { MdAdd } from 'react-icons/md'
+
+import { Button, Input } from '../../shared/components'
+import { HandlePet } from './handle-pets/HandlePet'
+
+import './styles.css'
+import { Container, Header, Content } from './styles'
 
 const searchForm = z.object({
   search: z.string({ message: 'E-mail é obrigatório' }),
@@ -15,23 +34,43 @@ const searchForm = z.object({
 
 type SearchForm = z.infer<typeof searchForm>
 
-export const Pets: React.FC = () => {
-  const rows: GridRowsProp = [
-    { id: 1, col1: 'Hello', col2: 'World' },
-    { id: 2, col1: 'DataGridPro', col2: 'is Awesome' },
-    { id: 3, col1: 'MUI', col2: 'is Amazing' },
-    { id: 4, col1: 'MUI', col2: 'is Amazing' },
-    { id: 5, col1: 'MUI', col2: 'is Amazing' },
-    { id: 6, col1: 'MUI', col2: 'is Amazing' },
-    { id: 7, col1: 'MUI', col2: 'is Amazing' },
-    { id: 8, col1: 'MUI', col2: 'is Amazing' },
-    { id: 9, col1: 'MUI', col2: 'is Amazing' },
-    { id: 10, col1: 'MUI', col2: 'is Amazing' },
-  ]
+type PetsProps = {
+  id?: string
+  name: string
+  race: string
+  age: number
+}
 
-  const columns: GridColDef[] = [
-    { field: 'col1', headerName: 'Column 1', width: 150 },
-    { field: 'col2', headerName: 'Column 2', width: 150 },
+export const Pets: React.FC = () => {
+  const navigate = useNavigate()
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+
+  const handleOpenMenu = (event: MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const [selectedRow, setSelectedRow] = useState<PetsProps>({} as PetsProps)
+
+  const [openModal, setOpenModal] = useState(false)
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null)
+  }
+
+  const handleModal = () => setOpenModal(!openModal)
+
+  function createData(name: string, race: string, age: number) {
+    return { name, race, age }
+  }
+
+  const rows = [
+    createData('York', 'Shitzu', 10),
+    createData('Ice cream sandwich', 'Raça', 9.0),
+    createData('Eclair', 'Vira lata', 16),
+    createData('Cupcake', 'Raça', 3),
+    createData('Gingerbread', 'Vira lata', 16),
   ]
 
   const {
@@ -48,6 +87,7 @@ export const Pets: React.FC = () => {
 
   return (
     <Container>
+      {openModal && <HandlePet open={openModal} handleClose={handleModal} />}
       <Header>
         <form onSubmit={handleSubmit(handleOnSearch)}>
           <Input
@@ -62,14 +102,82 @@ export const Pets: React.FC = () => {
           </button>
         </form>
 
-        <Button>
+        <Button onClick={() => handleModal()}>
           <MdAdd />
           Novo
         </Button>
       </Header>
 
       <Content>
-        <DataGrid rows={rows} columns={columns} />
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell></TableCell>
+                <TableCell align="left">Nome</TableCell>
+                <TableCell align="left">Raça</TableCell>
+                <TableCell align="right">Idade</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <TableRow key={row.name}>
+                  <TableCell align="left">
+                    <Box>
+                      <IconButton
+                        key={row.name}
+                        aria-controls={open ? 'basic-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? 'true' : undefined}
+                        onClick={(event) => {
+                          handleOpenMenu(event)
+                          setSelectedRow(row)
+                        }}
+                      >
+                        <Icon>more_horiz</Icon>
+                      </IconButton>
+                      <Menu
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleCloseMenu}
+                        anchorOrigin={{
+                          vertical: 'top',
+                          horizontal: 'left',
+                        }}
+                        transformOrigin={{
+                          vertical: 'top',
+                          horizontal: 'left',
+                        }}
+                      >
+                        <MenuItem onClick={() => alert('Editar')}>
+                          <IconButton>
+                            <Icon>edit</Icon>
+                          </IconButton>
+                          Editar
+                        </MenuItem>
+                        <MenuItem onClick={() => alert('visualizar')}>
+                          <IconButton>
+                            <Icon>visibility</Icon>
+                          </IconButton>
+                          Visualizar
+                        </MenuItem>
+                        <MenuItem onClick={() => alert('excluir')}>
+                          <IconButton>
+                            <Icon>delete</Icon>
+                          </IconButton>
+                          Excluir
+                        </MenuItem>
+                      </Menu>
+                    </Box>
+                  </TableCell>
+                  <TableCell align="left">{row.name}</TableCell>
+                  <TableCell align="left">{row.race}</TableCell>
+                  <TableCell align="right">{row.age}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Content>
     </Container>
   )

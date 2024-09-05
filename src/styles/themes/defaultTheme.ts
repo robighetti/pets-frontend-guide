@@ -6,7 +6,7 @@ export default {
   secondary_light: 'rgba(242, 5, 179, 0.1)',
 
   dark_gray: '#777',
-  light_gray: '#DCDCDC',
+  light_gray: '#777',
 
   text: '#333',
   white: '#FFF',

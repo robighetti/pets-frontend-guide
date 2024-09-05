@@ -8,8 +8,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import logo from '../../assets/logo.svg'
 import { Button, Input } from '../../shared/components'
 import { phoneFormat } from '../../shared/utils'
+import { useToast } from '../../shared/hooks/toast/Toast'
 
 import { Container, Content, Background } from './styles'
+import { useNavigate } from 'react-router-dom'
+import { api } from '../../shared/services/apiClient'
 
 const signUpForm = z.object({
   name: z.string({ message: 'Nome é obrigatório' }),
@@ -22,17 +25,45 @@ const signUpForm = z.object({
 export type SignUpForm = z.infer<typeof signUpForm>
 
 export const SignUp: React.FC = () => {
+  const navigate = useNavigate()
+  const { addToast } = useToast()
+
   const {
     handleSubmit,
     control,
     formState: { isSubmitting },
+    reset,
   } = useForm<SignUpForm>({
     resolver: zodResolver(signUpForm),
   })
 
   async function onSubmit(data: SignUpForm) {
-    console.log(data)
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    try {
+      await api.post('/users', data)
+
+      addToast({
+        type: 'success',
+        title: 'Cadastro Realizado',
+        description:
+          'Cadastro realizado com sucesso, você será direcionado para a tela de login !',
+      })
+
+      reset()
+
+      await new Promise((resolve) =>
+        setTimeout(() => {
+          resolve(navigate('/sign-in'))
+        }, 2000),
+      )
+    } catch (error) {
+      console.error(error)
+      addToast({
+        type: 'error',
+        title: 'Erro ao Cadastrar',
+        description:
+          'Não foi possível realizar o cadastro, procure nosso suporte!',
+      })
+    }
   }
 
   return (
@@ -76,7 +107,7 @@ export const SignUp: React.FC = () => {
           </Button>
         </form>
 
-        <a href="#">
+        <a onClick={() => navigate('/sign-in')}>
           <FaArrowLeft />
           Retornar para login
         </a>

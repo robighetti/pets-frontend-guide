@@ -1,5 +1,10 @@
 import { useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import {
+  useLocation,
+  useMatch,
+  useNavigate,
+  useResolvedPath,
+} from 'react-router-dom'
 // import { FaHome } from 'react-icons/fa'
 import { MdLogout } from 'react-icons/md'
 
@@ -11,6 +16,15 @@ import { Container, Header, Menu, MenuItem, Footer } from './styles'
 
 export const Aside: React.FC = () => {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const resolvedPath = useResolvedPath(pathname)
+
+  const match = useMatch({
+    path: resolvedPath.pathname,
+    end: false,
+  })
+
+  console.log(match)
 
   const handleNavigation = useCallback(
     (path: string) => {

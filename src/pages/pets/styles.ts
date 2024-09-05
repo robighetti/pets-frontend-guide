@@ -55,3 +55,24 @@ export const Header = styled.header`
 export const Content = styled.div`
   margin: 8px;
 `
+
+export const ActionsButton = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  button {
+    background: transparent;
+    border: 0;
+
+    transition: all 0.3s;
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    svg {
+      font-size: 24px;
+      color: ${({ theme }) => theme.primary};
+    }
+  }
+`
