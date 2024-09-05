@@ -9,6 +9,9 @@ import { Container, Content, Background } from './styles'
 import logo from '../../assets/logo.svg'
 import { Button, Input } from '../../shared/components'
 import { FaArrowLeft } from 'react-icons/fa'
+import { api } from '../../shared/services/apiClient'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useToast } from '../../shared/hooks/toast/Toast'
 
 const resetPasswordForm = z.object({
   password: z
@@ -22,17 +25,50 @@ const resetPasswordForm = z.object({
 export type ResetPasswordForm = z.infer<typeof resetPasswordForm>
 
 export const ResetPassword: React.FC = () => {
+  const { addToast } = useToast()
+  const navigate = useNavigate()
+  const { token = '' } = useParams<'token'>()
+
+  if (!token) {
+    navigate('/')
+  }
+
   const {
     handleSubmit,
     control,
+    reset,
     formState: { isSubmitting },
   } = useForm<ResetPasswordForm>({
     resolver: zodResolver(resetPasswordForm),
   })
 
-  async function onSubmit(data: ResetPasswordForm) {
-    console.log(data)
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+  async function onSubmit({ password }: ResetPasswordForm) {
+    try {
+      await api.patch(`/reset-password/${token}`, { password })
+
+      addToast({
+        type: 'success',
+        title: 'Senha alterada com sucesso!',
+        description: 'Sua senha foi alterada, você retornará a tela de login',
+      })
+
+      reset()
+
+      await new Promise((resolve) =>
+        setTimeout(() => {
+          resolve(navigate('/sign-in'))
+        }, 2000),
+      )
+    } catch (error) {
+      console.error(error)
+
+      addToast({
+        type: 'error',
+        title: 'Senha não alterada',
+        description:
+          'Sua senha não foi alterada, entre em contato com o suporte',
+      })
+    }
   }
 
   return (
