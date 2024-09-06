@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useState } from 'react'
+import { MouseEvent, useCallback, useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -27,6 +27,7 @@ import { HandlePet } from './handle-pets/HandlePet'
 
 import './styles.css'
 import { Container, Header, Content } from './styles'
+import { api } from '../../shared/services/apiClient'
 
 const searchForm = z.object({
   search: z.string({ message: 'E-mail é obrigatório' }),
@@ -34,16 +35,19 @@ const searchForm = z.object({
 
 type SearchForm = z.infer<typeof searchForm>
 
-type PetsProps = {
+export type PetsProps = {
   id?: string
   name: string
   race: string
   age: number
 }
 
-export const Pets: React.FC = () => {
-  const navigate = useNavigate()
+export type ActionProps = {
+  action: string
+  id: string | undefined
+}
 
+export const Pets: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
 
@@ -52,6 +56,8 @@ export const Pets: React.FC = () => {
   }
 
   const [selectedRow, setSelectedRow] = useState<PetsProps>({} as PetsProps)
+  const [rows, setRows] = useState<PetsProps[]>([])
+  const [actions, setActions] = useState<ActionProps>({} as ActionProps)
 
   const [openModal, setOpenModal] = useState(false)
 
@@ -59,19 +65,9 @@ export const Pets: React.FC = () => {
     setAnchorEl(null)
   }
 
-  const handleModal = () => setOpenModal(!openModal)
-
-  function createData(name: string, race: string, age: number) {
-    return { name, race, age }
-  }
-
-  const rows = [
-    createData('York', 'Shitzu', 10),
-    createData('Ice cream sandwich', 'Raça', 9.0),
-    createData('Eclair', 'Vira lata', 16),
-    createData('Cupcake', 'Raça', 3),
-    createData('Gingerbread', 'Vira lata', 16),
-  ]
+  const handleModal = useCallback(() => {
+    setOpenModal(!openModal)
+  }, [openModal])
 
   const {
     handleSubmit,
@@ -81,13 +77,45 @@ export const Pets: React.FC = () => {
     resolver: zodResolver(searchForm),
   })
 
-  const handleOnSearch = useCallback((data: SearchForm) => {
-    console.log(data)
+  const handleOnSearch = useCallback((_: SearchForm) => {
+    alert('Pesquisar')
   }, [])
+
+  const getAllPets = useCallback(async () => {
+    const { data } = await api.get('/pets')
+
+    setRows(data)
+  }, [])
+
+  const handleEdit = useCallback(() => {
+    setActions({
+      action: 'edit',
+      id: selectedRow.id,
+    })
+    handleModal()
+  }, [selectedRow.id, handleModal])
+
+  const handleNew = useCallback(() => {
+    setActions({
+      action: 'add',
+      id: undefined,
+    })
+    handleModal()
+  }, [handleModal])
+
+  useEffect(() => {
+    getAllPets()
+  }, [getAllPets, openModal])
 
   return (
     <Container>
-      {openModal && <HandlePet open={openModal} handleClose={handleModal} />}
+      {openModal && (
+        <HandlePet
+          open={openModal}
+          handleClose={handleModal}
+          action={actions}
+        />
+      )}
       <Header>
         <form onSubmit={handleSubmit(handleOnSearch)}>
           <Input
@@ -102,7 +130,7 @@ export const Pets: React.FC = () => {
           </button>
         </form>
 
-        <Button onClick={() => handleModal()}>
+        <Button onClick={() => handleNew()}>
           <MdAdd />
           Novo
         </Button>
@@ -121,7 +149,7 @@ export const Pets: React.FC = () => {
             </TableHead>
             <TableBody>
               {rows.map((row) => (
-                <TableRow key={row.name}>
+                <TableRow key={row.id}>
                   <TableCell align="left">
                     <Box>
                       <IconButton
@@ -149,7 +177,7 @@ export const Pets: React.FC = () => {
                           horizontal: 'left',
                         }}
                       >
-                        <MenuItem onClick={() => alert('Editar')}>
+                        <MenuItem onClick={() => handleEdit()}>
                           <IconButton>
                             <Icon>edit</Icon>
                           </IconButton>

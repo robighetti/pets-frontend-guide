@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Box, Modal } from '@mui/material'
 
 import { useForm } from 'react-hook-form'
@@ -9,11 +9,14 @@ import { Button, Input } from '../../../shared/components'
 
 import { Container, Form } from './styles'
 import { api } from '../../../shared/services/apiClient'
+import { useToast } from '../../../shared/hooks/toast/Toast'
+
+import { ActionProps, PetsProps } from '../Pets'
 
 type Props = {
   open: boolean
   handleClose: () => void
-  petId?: string
+  action: ActionProps
 }
 
 const style = {
@@ -37,46 +40,68 @@ const petsForm = z.object({
 
 type PetsForm = z.infer<typeof petsForm>
 
-export const HandlePet: React.FC<Props> = ({ open, handleClose, petId }) => {
+export const HandlePet: React.FC<Props> = ({ open, handleClose, action }) => {
+  const { addToast } = useToast()
+  const [pet, setPet] = useState<PetsProps>({} as PetsProps)
+
   const {
     handleSubmit,
     control,
+    reset,
     formState: { isSubmitting },
   } = useForm<PetsForm>({
     resolver: zodResolver(petsForm),
+    defaultValues: pet,
   })
 
   const handleOnSubmit = useCallback(
     async (data: PetsForm) => {
-      console.log(data)
-      if (petId) {
-        // alteração
-      } else {
-        // inclusao
-        const result = await api.post('/pets', data)
+      try {
+        if (action.action === 'edit') {
+          // alteração
+          Object.assign(data, { id: action.id })
+          await api.put(`/pets/${action.id}`, data)
 
-        console.log(result)
+          addToast({
+            type: 'success',
+            title: 'Pet alterado com sucesso !',
+          })
+        } else if (action.action === 'add') {
+          // inclusao
+          await api.post('/pets', data)
+
+          addToast({
+            type: 'success',
+            title: 'Pet adicionado com sucesso !',
+          })
+        }
+
+        reset()
+        handleClose()
+      } catch (error) {
+        console.error(error)
       }
     },
-    [petId],
+    [reset, handleClose, addToast, action.action, action.id],
   )
 
   const getOnePet = useCallback(async () => {
-    const result = await api.get(`/pets/${petId}`)
-
-    console.log(result)
-  }, [petId])
+    const { data } = await api.get(`/pets/${action.id}`)
+    setPet(data)
+  }, [action.id])
 
   useEffect(() => {
-    if (petId) getOnePet()
-  }, [getOnePet, petId])
+    if (action.id) getOnePet()
+  }, [getOnePet, action.id])
 
   return (
     <Container>
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
           <Form onSubmit={handleSubmit(handleOnSubmit)}>
-            <h1>Novo Cadastro</h1>
+            <h1>
+              {action.action === 'add' ? 'Novo Cadastro' : 'Detalhes do pet'}
+            </h1>
 
             <Input
               name="name"

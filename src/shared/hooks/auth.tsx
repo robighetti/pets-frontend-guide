@@ -16,6 +16,7 @@ type SignInCredentials = {
 
 type AuthContextData = {
   user: object
+  token: string
   signIn(credentials: SignInCredentials): Promise<void>
   signOut: () => void
 }
@@ -54,8 +55,6 @@ const AuthProvider: React.FC<AuthProviderData> = ({ children }) => {
 
     localStorage.setItem(environments.APP_NAME, JSON.stringify(payload))
     setData(payload)
-
-    // console.log(data)
   }, [])
 
   const signOut = useCallback(() => {
@@ -63,7 +62,9 @@ const AuthProvider: React.FC<AuthProviderData> = ({ children }) => {
     setData({} as AuthPayload)
   }, [])
   return (
-    <AuthContext.Provider value={{ signIn, user: data.user, signOut }}>
+    <AuthContext.Provider
+      value={{ signIn, user: data.user, signOut, token: data.token }}
+    >
       {children}
     </AuthContext.Provider>
   )
