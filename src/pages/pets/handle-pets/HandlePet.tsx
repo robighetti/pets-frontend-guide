@@ -42,20 +42,20 @@ type PetsForm = z.infer<typeof petsForm>
 
 export const HandlePet: React.FC<Props> = ({ open, handleClose, action }) => {
   const { addToast } = useToast()
-  const [pet, setPet] = useState<PetsProps>({} as PetsProps)
 
   const {
     handleSubmit,
     control,
     reset,
     formState: { isSubmitting },
+    setValue,
   } = useForm<PetsForm>({
     resolver: zodResolver(petsForm),
-    defaultValues: pet,
   })
 
   const handleOnSubmit = useCallback(
     async (data: PetsForm) => {
+      console.log(data)
       try {
         if (action.action === 'edit') {
           // alteração
@@ -87,12 +87,18 @@ export const HandlePet: React.FC<Props> = ({ open, handleClose, action }) => {
 
   const getOnePet = useCallback(async () => {
     const { data } = await api.get(`/pets/${action.id}`)
-    setPet(data)
-  }, [action.id])
+    console.log('data', data)
+
+    setValue('name', data.name)
+    setValue('race', data.race)
+    setValue('age', data.age)
+  }, [action.id, setValue])
 
   useEffect(() => {
-    if (action.id) getOnePet()
-  }, [getOnePet, action.id])
+    if (action.action !== 'add') {
+      getOnePet()
+    }
+  }, [getOnePet, action.action])
 
   return (
     <Container>
@@ -108,6 +114,7 @@ export const HandlePet: React.FC<Props> = ({ open, handleClose, action }) => {
               label="Nome do pet"
               placeholder="Qual o nome do pet"
               control={control}
+              disabled={action.action === 'view'}
             />
 
             <Input
@@ -115,19 +122,23 @@ export const HandlePet: React.FC<Props> = ({ open, handleClose, action }) => {
               label="Raça do pet"
               placeholder="Qual a raça do pet"
               control={control}
+              disabled={action.action === 'view'}
             />
 
             <Input
               name="age"
               label="Idade do pet"
               placeholder="Qual a idade do pet"
-              control={control}
               type="number"
+              control={control}
+              disabled={action.action === 'view'}
             />
 
-            <Button disabled={isSubmitting} type="submit">
-              Salvar
-            </Button>
+            {action.action !== 'view' && (
+              <Button disabled={isSubmitting} type="submit">
+                Salvar
+              </Button>
+            )}
           </Form>
         </Box>
       </Modal>

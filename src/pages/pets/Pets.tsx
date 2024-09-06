@@ -95,6 +95,14 @@ export const Pets: React.FC = () => {
     handleModal()
   }, [selectedRow.id, handleModal])
 
+  const handleView = useCallback(() => {
+    setActions({
+      action: 'view',
+      id: selectedRow.id,
+    })
+    handleModal()
+  }, [selectedRow.id, handleModal])
+
   const handleNew = useCallback(() => {
     setActions({
       action: 'add',
@@ -118,7 +126,7 @@ export const Pets: React.FC = () => {
       )}
       <Header>
         <form onSubmit={handleSubmit(handleOnSearch)}>
-          <Input
+          {/* <Input
             label="Consulta"
             placeholder="Faça sua pesquisa aqui"
             name="search"
@@ -127,7 +135,7 @@ export const Pets: React.FC = () => {
 
           <button type="submit" disabled={isSubmitting}>
             <FaSearch />
-          </button>
+          </button> */}
         </form>
 
         <Button onClick={() => handleNew()}>
@@ -183,7 +191,7 @@ export const Pets: React.FC = () => {
                           </IconButton>
                           Editar
                         </MenuItem>
-                        <MenuItem onClick={() => alert('visualizar')}>
+                        <MenuItem onClick={() => handleView()}>
                           <IconButton>
                             <Icon>visibility</Icon>
                           </IconButton>
