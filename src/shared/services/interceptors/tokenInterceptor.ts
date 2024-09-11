@@ -3,7 +3,7 @@ import { environments } from '../../environments'
 export const tokenInterceptor = (request: any) => {
   const payload = localStorage.getItem(environments.APP_NAME)
 
-  if (!payload) return
+  if (!payload) return request
 
   const { token } = JSON.parse(payload)
 

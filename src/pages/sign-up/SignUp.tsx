@@ -56,7 +56,7 @@ export const SignUp: React.FC = () => {
         }, 2000),
       )
     } catch (error) {
-      console.error(error)
+      console.log(error)
       addToast({
         type: 'error',
         title: 'Erro ao Cadastrar',
